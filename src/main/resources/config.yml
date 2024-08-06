@@ -1,0 +1,35 @@
+# This is the config file of InfinitumEss plugin, and written in UTF-8 Format
+# Config version, please don't edit
+ConfigVersion: 1.0
+
+# Dropped item clean period
+# in seconds, must be greater than 30 seconds
+# Default is 10 minutes, which is 600 seconds
+CleanPeriod: 600
+
+# Dropped items cleaner message, countdown will count for 20,10,5,4,3,2,1 second
+# %d is seconds
+CleanCountdownMessage: "[IE] 服务器将在 %d 秒后清理所有掉落物!"
+
+# Clean message
+CleanMessage: "[IE] 本次清理了 %d 个掉落物!"
+
+# AutoGC
+# if you enable/disable this, you have to restart the server to make the setting work
+AutoGC:
+  EnableGC: true
+  Period: 300 # in seconds
+  GCMessage: "[IE] GC已触发!"
+
+# if you enable/disable this, you have to restart the server to make the setting work
+AutoRestart:
+  EnableAutoRestart: true
+  # When memory reaches this percentage, restart the server
+  # 0.9 means 90%, default are 0.95
+  # Memory percentage will be checked every second
+  RestartThreshold: 0.95
+  RestartStartCountdownMessage1: "[IE] 服务器因内存占用过高需要重启!"
+  RestartStartCountdownMessage2: "[IE] 如果你认为这是异常重复重启请联系管理员!"
+  # Countdown message, countdown will count for 20,10,5,4,3,2,1 second
+  RestartCountdownMessage: "[IE] 服务器将在 %d 秒后重启!"
+  RestartMessage: "[IE] 服务器重启中!"

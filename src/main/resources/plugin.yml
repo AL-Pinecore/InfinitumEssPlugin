@@ -1,0 +1,20 @@
+name: InfinitumEss
+version: '1.0-SNAPSHOT'
+main: cn.infinitumstudios.infinitumEss.InfinitumEss
+api-version: '1.20'
+prefix: InfinitumEss
+load: STARTUP
+authors: [ ALPinecore ]
+description: A server plugin for infMC
+commands:
+  infinitumess:
+    description: Commands of InfinitumEss plugin
+    permission: infinitumess.commands
+    aliases: ["ie"]
+  garbagecollect:
+    description: Run garbage collect
+    permission:  infinitumess.commands.gc
+    aliases: ["gc"]
+  cleanitems:
+    description: Clean dropped items
+    permission: infinitumess.commands.cleanitems
