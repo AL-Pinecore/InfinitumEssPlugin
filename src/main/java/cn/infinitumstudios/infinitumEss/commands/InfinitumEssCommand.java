@@ -19,21 +19,16 @@ import java.util.Objects;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class InfinitumEssCommand implements CommandExecutor, TabCompleter {
-    FileConfiguration config;
-    InfinitumEss ie;
-
+public class InfinitumEssCommand extends InfinitumCommand implements CommandExecutor, TabCompleter {
     public InfinitumEssCommand(InfinitumEss ie){
-        this.ie = ie;
-        this.config = ie.getConfig();
-
+        super(ie);
     }
 
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
 
         if (args.length == 0)
         {
-            ie.getLogger().info("Usage: /infinitumess <args>, know more command please use /infinitumess ? or /infinitumess help");
+            plugin.getLogger().info("Usage: /infinitumess <args>, know more command please use /infinitumess ? or /infinitumess help");
             return true;
         }
         else
@@ -47,15 +42,15 @@ public class InfinitumEssCommand implements CommandExecutor, TabCompleter {
                         commandSender.sendMessage(ChatColor.BLUE + "/cleanitems - clean dropped items");
 
                     }
-                    ie.getLogger().info("Command list:");
-                    ie.getLogger().info("/help - command list");
-                    ie.getLogger().info("/gc - run Garbage Collect");
-                    ie.getLogger().info("/cleanitems - clean dropped items");
+                    plugin.getLogger().info("Command list:");
+                    plugin.getLogger().info("/help - command list");
+                    plugin.getLogger().info("/gc - run Garbage Collect");
+                    plugin.getLogger().info("/cleanitems - clean dropped items");
 
                     return true;
                 }
                 case "reload" -> {
-                    ie.reloadPlugin(commandSender);
+                    plugin.reloadPlugin(commandSender);
                     return true;
                 }
                 case "gc" -> {
@@ -63,49 +58,11 @@ public class InfinitumEssCommand implements CommandExecutor, TabCompleter {
                     if (commandSender instanceof Player) {
                         commandSender.sendMessage(ChatColor.BLUE + config.getString("AutoGC.GCMessage"));
                     }
-                    ie.getLogger().info("Garbage Collect is triggered");
+                    plugin.getLogger().info("Garbage Collect is triggered");
                     return true;
                 }
                 case "cleanitems" -> {
-                    int removedDropItems = 0;
 
-                    World world = getServer().getWorld("world");
-                    assert world != null;
-                    List<Entity> entityListWorld = world.getEntities();
-
-                    for(Entity current : entityListWorld){
-                        if (current instanceof Item){
-                            current.remove();
-                            removedDropItems ++;
-                        }
-                    }
-
-                    World nether = getServer().getWorld("world_nether");
-                    assert nether != null;
-                    List<Entity> entityListNether = nether.getEntities();
-
-                    for(Entity current : entityListNether){
-                        if (current instanceof Item){
-                            current.remove();
-                            removedDropItems ++;
-                        }
-                    }
-
-                    World theend = getServer().getWorld("world_the_end");
-                    assert theend != null;
-                    List<Entity> entityListTheEnd = theend.getEntities();
-
-                    for(Entity current : entityListTheEnd){
-                        if (current instanceof Item){
-                            current.remove();
-                            removedDropItems ++;
-                        }
-                    }
-
-                    int finalRemovedDropItems = removedDropItems;
-                    getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + String.format(Objects.requireNonNull(config.getString("CleanMessage")), finalRemovedDropItems)));
-
-                    ie.getLogger().info("All dropped items have been cleared");
 
                     return true;
                 }
@@ -129,7 +86,7 @@ public class InfinitumEssCommand implements CommandExecutor, TabCompleter {
         }
         else
         {
-            return null;
+            return new ArrayList<>();
         }
     }
 

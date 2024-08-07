@@ -17,140 +17,91 @@ import java.util.Objects;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class CleanItemsCommand implements CommandExecutor {
-    InfinitumEss ie;
-    FileConfiguration config;
+public class CleanItemsCommand extends InfinitumCommand implements CommandExecutor {
     int cleanCountdown;
     String cleanCountdownMessage;
     public CleanItemsCommand (InfinitumEss ie){
-        this.ie = ie;
-        this.config = ie.getConfig();
+        super(ie);
 
         cleanCountdown = this.config.getInt("CleanPeriod");
         cleanCountdownMessage = config.getString("CleanCountdownMessage");
     }
 
-    public void reloadCommand(FileConfiguration config){
-        this.config = config;
+    @Override
+    public void reloadCommand(InfinitumEss plugin){
+        super.reloadCommand(plugin);
+
         cleanCountdown = this.config.getInt("CleanPeriod");
         cleanCountdownMessage = this.config.getString("CleanCountdownMessage");
     }
+
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-
-        int removedDropItems = 0;
-
-        World world = getServer().getWorld("world");
-        assert world != null;
-        List<Entity> entityListWorld = world.getEntities();
-
-        for(Entity current : entityListWorld){
-            if (current instanceof Item){
-                current.remove();
-                removedDropItems ++;
-            }
-        }
-
-        World nether = getServer().getWorld("world_nether");
-        assert nether != null;
-        List<Entity> entityListNether = nether.getEntities();
-
-        for(Entity current : entityListNether){
-            if (current instanceof Item){
-                current.remove();
-                removedDropItems ++;
-            }
-        }
-
-        World theend = getServer().getWorld("world_the_end");
-        assert theend != null;
-        List<Entity> entityListTheEnd = theend.getEntities();
-
-        for(Entity current : entityListTheEnd){
-            if (current instanceof Item){
-                current.remove();
-                removedDropItems ++;
-            }
-        }
-
-        int finalRemovedDropItems = removedDropItems;
-        getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + String.format(Objects.requireNonNull(config.getString("CleanMessage")), finalRemovedDropItems)));
-
-        ie.getLogger().info("All dropped items have been cleared");
-
+        clearItems();
         return true;
-
     }
+
     public void cleanItemTimedTask (){
         new BukkitRunnable(){
             @Override
             public void run() {
-                if (cleanCountdown == 20){
-                    getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + String.format(cleanCountdownMessage, cleanCountdown)));
-                }
-                if (cleanCountdown == 10){
-                    getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + String.format(cleanCountdownMessage, cleanCountdown)));
-                }
-                if (cleanCountdown == 5){
-                    getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + String.format(cleanCountdownMessage, cleanCountdown)));
-                }
-                if (cleanCountdown == 4){
-                    getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + String.format(cleanCountdownMessage, cleanCountdown)));
-                }
-                if (cleanCountdown == 3){
-                    getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + String.format(cleanCountdownMessage, cleanCountdown)));
-                }
-                if (cleanCountdown == 2){
-                    getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + String.format(cleanCountdownMessage, cleanCountdown)));
-                }
-                if (cleanCountdown == 1){
-                    getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + String.format(cleanCountdownMessage, cleanCountdown)));
-                }
-                if (cleanCountdown == 0){
-
-                    int removedDropItems = 0;
-
-                    World world = getServer().getWorld("world");
-                    assert world != null;
-                    List<Entity> entityListWorld = world.getEntities();
-
-                    for(Entity current : entityListWorld){
-                        if (current instanceof Item){
-                            current.remove();
-                            removedDropItems++;
-                        }
-                    }
-
-                    World nether = getServer().getWorld("world_nether");
-                    assert nether != null;
-                    List<Entity> entityListNether = nether.getEntities();
-
-                    for(Entity current : entityListNether){
-                        if (current instanceof Item){
-                            current.remove();
-                            removedDropItems++;
-                        }
-                    }
-
-                    World theend = getServer().getWorld("world_the_end");
-                    assert theend != null;
-                    List<Entity> entityListTheEnd = theend.getEntities();
-
-                    for(Entity current : entityListTheEnd){
-                        if (current instanceof Item){
-                            current.remove();
-                            removedDropItems++;
-                        }
-                    }
-
-                    int finalRemovedDropItems = removedDropItems;
-                    getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + String.format(Objects.requireNonNull(config.getString("CleanMessage")), finalRemovedDropItems)));
-                    ie.getLogger().info("All dropped items have been cleared");
-
+                if (cleanCountdown == 20) {
+                    InfinitumEss.broadcastMessage(ChatColor.AQUA + String.format(cleanCountdownMessage, cleanCountdown));
+                } else if (cleanCountdown == 10) {
+                    InfinitumEss.broadcastMessage(ChatColor.AQUA + String.format(cleanCountdownMessage, cleanCountdown));
+                } else if (cleanCountdown <= 5 && cleanCountdown > 0) {
+                    InfinitumEss.broadcastMessage(ChatColor.AQUA + String.format(cleanCountdownMessage, cleanCountdown));
+                } else if (cleanCountdown == 0) {
+                    clearItems();
                     cleanCountdown = config.getInt("CleanPeriod");
                 }
+
                 cleanCountdown--;
             }
-        }.runTaskTimer(ie,0L,20L);
+        }.runTaskTimer(plugin,0L,20L);
+    }
+
+    public void clearItems(){
+        int removedDropItems = 0;
+
+        World world = getServer().getWorld("world"), nether = getServer().getWorld("world_nether"), theend = getServer().getWorld("world_the_end");
+
+        if(world != null) {
+            List<Entity> entityListWorld = world.getEntities();
+
+            for (Entity current : entityListWorld) {
+                if (current instanceof Item) {
+                    current.remove();
+                    removedDropItems++;
+                }
+            }
+        }
+
+        if(nether != null) {
+            List<Entity> entityListNether = nether.getEntities();
+
+            for (Entity current : entityListNether) {
+                if (current instanceof Item) {
+                    current.remove();
+                    removedDropItems++;
+                }
+            }
+        }
+
+        if(theend != null) {
+            List<Entity> entityListTheEnd = theend.getEntities();
+
+            for (Entity current : entityListTheEnd) {
+                if (current instanceof Item) {
+                    current.remove();
+                    removedDropItems++;
+                }
+            }
+        }
+
+        int finalRemovedDropItems = removedDropItems;
+        InfinitumEss.broadcastMessage(ChatColor.AQUA + String.format(Objects.requireNonNull(config.getString("CleanMessage")), finalRemovedDropItems));
+
+        plugin.getLogger().info("All dropped items have been cleared");
     }
 }

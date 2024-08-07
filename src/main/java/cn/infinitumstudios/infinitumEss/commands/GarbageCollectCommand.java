@@ -10,17 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-public class GarbageCollectCommand implements CommandExecutor {
-    InfinitumEss ie;
-    FileConfiguration config;
-    Runtime runtime;
-    public GarbageCollectCommand (InfinitumEss ie){
-        this.ie = ie;
-        this.config = ie.getConfig();
-    }
-
-    public void reloadCommand(FileConfiguration config){
-        this.config = config;
+public class GarbageCollectCommand extends InfinitumCommand implements CommandExecutor {
+    public GarbageCollectCommand (InfinitumEss plugin){
+        super(plugin);
     }
 
     @Override
@@ -30,7 +22,7 @@ public class GarbageCollectCommand implements CommandExecutor {
         {
             commandSender.sendMessage(ChatColor.BLUE + config.getString("AutoGC.GCMessage"));
         }
-        ie.getLogger().info("Garbage Collect is triggered");
+        plugin.getLogger().info("Garbage Collect is triggered");
         return true;
     }
 
@@ -39,8 +31,8 @@ public class GarbageCollectCommand implements CommandExecutor {
             @Override
             public void run() {
                 System.gc();
-                ie.getLogger().info("Garbage Collect Done");
+                plugin.getLogger().info("Garbage Collect Done");
             }
-        }.runTaskTimer(ie, 0L, config.getInt("AutoGC.Period") * 20L);
+        }.runTaskTimer(plugin, 0L, config.getInt("AutoGC.Period") * 20L);
     }
 }

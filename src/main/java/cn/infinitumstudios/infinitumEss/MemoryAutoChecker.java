@@ -34,20 +34,20 @@ public class MemoryAutoChecker {
 
     private void RestartServer(){
         ie.getLogger().info("服务器内存占用已达设置上限，现即将自动重启!");
-        getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + Objects.requireNonNull(config.getString("AutoRestart.RestartStartCountdownMessage1"))));
-        getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + Objects.requireNonNull(config.getString("AutoRestart.RestartStartCountdownMessage2"))));
+        InfinitumEss.broadcastMessage(ChatColor.AQUA + Objects.requireNonNull(config.getString("AutoRestart.RestartStartCountdownMessage1")));
+        InfinitumEss.broadcastMessage(ChatColor.AQUA + Objects.requireNonNull(config.getString("AutoRestart.RestartStartCountdownMessage2")));
         new BukkitRunnable(){
             int countdown = 20;
             @Override
             public void run() {
-                if (countdown == 20 || countdown == 10 || countdown == 5 || countdown == 4 || countdown == 3 || countdown == 2 || countdown == 1){
-                    getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + String.format(Objects.requireNonNull(config.getString("AutoRestart.RestartCountdownMessage")), countdown)));
-                }
-                if (countdown == 0){
-                    getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.AQUA + Objects.requireNonNull(config.getString("AutoRestart.RestartMessage"))));
+                if (countdown == 20 || countdown == 10 || (countdown <= 5 && countdown > 0)){
+                    InfinitumEss.broadcastMessage(ChatColor.AQUA + String.format(Objects.requireNonNull(config.getString("AutoRestart.RestartCountdownMessage")), countdown));
+                } else if (countdown == 0){
+                    InfinitumEss.broadcastMessage(ChatColor.AQUA + Objects.requireNonNull(config.getString("AutoRestart.RestartMessage")));
                     getServer().dispatchCommand(getServer().getConsoleSender(), "restart");
                 }
-                countdown --;
+
+                countdown--;
             }
         }.runTaskTimer(ie, 0L, 20L);
 

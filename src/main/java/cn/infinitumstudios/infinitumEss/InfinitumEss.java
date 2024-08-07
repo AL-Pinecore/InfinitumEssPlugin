@@ -3,6 +3,7 @@ package cn.infinitumstudios.infinitumEss;
 import cn.infinitumstudios.infinitumEss.commands.CleanItemsCommand;
 import cn.infinitumstudios.infinitumEss.commands.GarbageCollectCommand;
 import cn.infinitumstudios.infinitumEss.commands.InfinitumEssCommand;
+import cn.infinitumstudios.infinitumEss.event.PluginReloadEvent;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -19,11 +20,13 @@ import java.util.Objects;
 
 public final class InfinitumEss extends JavaPlugin implements CommandExecutor, TabCompleter, Listener {
 
-    GarbageCollectCommand gcc;
+    private GarbageCollectCommand gcc;
     CleanItemsCommand cic;
     InfinitumEssCommand iec;
     MemoryAutoChecker mac;
     FileConfiguration config;
+
+    public static InfinitumEss instance;
 
     @Override
     public void onEnable() {
@@ -76,13 +79,23 @@ public final class InfinitumEss extends JavaPlugin implements CommandExecutor, T
     public void reloadPlugin(CommandSender commandSender){
 
         this.reloadConfig();
-        gcc.reloadCommand(getConfig());
-        cic.reloadCommand(getConfig());
-        iec.reloadCommand(getConfig());
+        PluginReloadEvent.EVENT.invoker().onCallback(this);
 
         this.getLogger().info("InfinitumEssential plugin config file reloaded!");
         if (commandSender instanceof Player) {
             commandSender.sendMessage(ChatColor.BLUE + "[IE] 插件重载成功!");
         }
+    }
+
+    public static InfinitumEss get(){
+        if(instance == null){
+            instance = getPlugin(InfinitumEss.class);
+        }
+
+        return instance;
+    }
+
+    public static void broadcastMessage(String text){
+        get().getServer().getOnlinePlayers().forEach(player -> player.sendMessage(text));
     }
 }
