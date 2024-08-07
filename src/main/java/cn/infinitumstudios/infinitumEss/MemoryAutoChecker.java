@@ -19,11 +19,13 @@ public class MemoryAutoChecker {
     }
     public void Start(){
         new BukkitRunnable(){
+            long usedMemory;
             long usedMemoryPercentages;
             @Override
             public void run() {
-                usedMemoryPercentages = (runtime.maxMemory() - runtime.freeMemory()) / runtime.maxMemory();
-                if (usedMemoryPercentages >= config.getLong("AutoRestart.RestartThreshold")){
+                usedMemory = runtime.totalMemory() - runtime.freeMemory();
+                usedMemoryPercentages = usedMemory / runtime.maxMemory();
+                if (usedMemoryPercentages > config.getLong("AutoRestart.RestartThreshold")){
                     RestartServer();
                 }
             }
