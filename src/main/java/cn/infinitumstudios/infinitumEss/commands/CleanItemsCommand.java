@@ -2,13 +2,14 @@ package cn.infinitumstudios.infinitumEss.commands;
 
 import cn.infinitumstudios.infinitumEss.InfinitumEss;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,8 +72,29 @@ public class CleanItemsCommand extends InfinitumCommand implements CommandExecut
 
             for (Entity current : entityListWorld) {
                 if (current instanceof Item) {
-                    current.remove();
-                    removedDropItems++;
+                    if (current.getTicksLived() > 6000) {
+                        ItemStack itemStack = ((Item) current).getItemStack();
+                        if (itemStack.getType() != Material.SHULKER_BOX &&
+                                itemStack.getType() != Material.BLACK_SHULKER_BOX &&
+                                itemStack.getType() != Material.BLUE_SHULKER_BOX &&
+                                itemStack.getType() != Material.BROWN_SHULKER_BOX &&
+                                itemStack.getType() != Material.CYAN_SHULKER_BOX &&
+                                itemStack.getType() != Material.GRAY_SHULKER_BOX &&
+                                itemStack.getType() != Material.GREEN_SHULKER_BOX &&
+                                itemStack.getType() != Material.LIGHT_BLUE_SHULKER_BOX &&
+                                itemStack.getType() != Material.LIGHT_GRAY_SHULKER_BOX &&
+                                itemStack.getType() != Material.LIME_SHULKER_BOX &&
+                                itemStack.getType() != Material.MAGENTA_SHULKER_BOX &&
+                                itemStack.getType() != Material.ORANGE_SHULKER_BOX &&
+                                itemStack.getType() != Material.PINK_SHULKER_BOX &&
+                                itemStack.getType() != Material.PURPLE_SHULKER_BOX &&
+                                itemStack.getType() != Material.RED_SHULKER_BOX &&
+                                itemStack.getType() != Material.WHITE_SHULKER_BOX &&
+                                itemStack.getType() != Material.YELLOW_SHULKER_BOX) {
+                            current.remove();
+                            removedDropItems++;
+                        }
+                    }
                 }
             }
         }
